@@ -137,7 +137,7 @@ bin/flexvol-ppc64le: ARCH=ppc64le
 bin/flexvol-s390x: ARCH=s390x
 bin/flexvol-%: vendor $(SRC_FILES)
 	mkdir -p bin
-	$(DOCKER_GO_BUILD) go build -v -o bin/flexvol-$(ARCH) flexvol/flexvoldriver.go
+	$(DOCKER_GO_BUILD) env GOARCH=$(ARCH) go build -v -o bin/flexvol-$(ARCH) flexvol/flexvoldriver.go
 
 ###############################################################################
 # Building the image
