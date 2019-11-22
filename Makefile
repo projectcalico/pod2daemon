@@ -1,4 +1,4 @@
-PACKAGE_NAME?=github.com/projectcalico/node
+PACKAGE_NAME?=github.com/projectcalico/pod2daemon
 GO_BUILD_VER?=v0.27
 
 ###############################################################################
