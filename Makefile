@@ -17,7 +17,7 @@ DEV_TAG_SUFFIX        ?= 0.dev
 # If this is a release, also tag and push additional images.
 ifeq ($(RELEASE),true)
 FLEXVOL_IMAGE  ?=pod2daemon-flexvol
-DEV_REGISTRIES ?=quay.io/calico calico $(RELEASE_REGISTRIES)
+DEV_REGISTRIES ?=quay.io/calico calico 
 else
 FLEXVOL_IMAGE  ?=calico/pod2daemon-flexvol
 DEV_REGISTRIES ?=quay.io registry.hub.docker.com
@@ -148,10 +148,10 @@ release-tag: release-prereqs release-notes
 
 ## Produces a clean build of release artifacts at the specified version.
 release-build: release-prereqs clean
-	$(MAKE) image-all
-	$(MAKE) tag-images-all IMAGETAG=$(VERSION)
+	$(MAKE) image-all RELEASE=true
+	$(MAKE) tag-images-all IMAGETAG=$(VERSION) RELEASE=true
 	# Generate the `latest` images.
-	$(MAKE) tag-images-all IMAGETAG=latest
+	$(MAKE) tag-images-all IMAGETAG=latest RELEASE=true
 
 ## Verifies the release artifacts produces by `make release-build` are correct.
 release-verify: release-prereqs
@@ -175,7 +175,7 @@ release-publish: release-prereqs
 	git push origin $(VERSION)
 
 	# Push images.
-	$(MAKE) push-all push-manifests push-non-manifests IMAGETAG=$(VERSION)
+	$(MAKE) push-all push-manifests push-non-manifests IMAGETAG=$(VERSION) RELEASE=true
 
 	@echo "Finalize the GitHub release based on the pushed tag."
 	@echo ""
@@ -190,7 +190,7 @@ release-publish: release-prereqs
 # run this target for alpha / beta / release candidate builds, or patches to earlier Calico versions.
 ## Pushes `latest` release images. WARNING: Only run this for latest stable releases.
 release-publish-latest: release-prereqs
-	$(MAKE) push-all push-manifests push-non-manifests IMAGETAG=latest
+	$(MAKE) push-all push-manifests push-non-manifests IMAGETAG=latest RELEASE=true
 
 # release-prereqs checks that the environment is configured properly to create a release.
 release-prereqs:
