@@ -39,6 +39,14 @@ include Makefile.common
 
 ###############################################################################
 
+# We need CGO to leverage Boring SSL.  However, the cross-compile doesn't support CGO yet.
+# Currently CGO can be enbaled in ARM64 and AMD64 builds.
+ifeq ($(ARCH), $(filter $(ARCH),amd64))
+CGO_ENABLED=1
+else
+CGO_ENABLED=0
+endif
+
 SRC_FILES=$(shell find -name '*.go')
 
 .PHONY: clean
@@ -72,7 +80,7 @@ bin/flexvol-armv7: ARCH=armv7
 bin/flexvol-ppc64le: ARCH=ppc64le
 bin/flexvol-s390x: ARCH=s390x
 bin/flexvol-%: $(SRC_FILES)
-	$(DOCKER_RUN) $(CALICO_BUILD) go build -v -o bin/flexvol-$(ARCH) flexvol/flexvoldriver.go
+	$(DOCKER_RUN) -e CGO_ENABLED=$(CGO_ENABLED) $(CALICO_BUILD) go build -v -o bin/flexvol-$(ARCH) flexvol/flexvoldriver.go
 
 ###############################################################################
 # Building the image
