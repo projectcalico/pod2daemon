@@ -61,5 +61,5 @@ if [ -f ${DSTDIR}/${DSTIMAGE} ]; then
 fi
 
 cp ${SRCDIR}/${IMAGE} ${DSTDIR}/.${DSTIMAGE}
-chmod 0550 ${DSTDIR}/.${DSTIMAGE}
+chmod 0555 ${DSTDIR}/.${DSTIMAGE}
 mv ${DSTDIR}/.${DSTIMAGE} ${DSTDIR}/${DSTIMAGE}
