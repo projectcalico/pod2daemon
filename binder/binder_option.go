@@ -14,18 +14,14 @@
 
 package binder
 
-type BinderOption interface {
-	apply(*binder)
-}
+type BinderOption func(*binder)
 
 type funcCredentialFilter func(Credentials) error
-
-func (f funcCredentialFilter) apply(b *binder) {
-	b.workloads.credentialFilter = f
-}
 
 // FilterCredential is a function that receives the connection Credential info
 // return a non nil erro to deny the credential.
 func CredentialFilter(f func(Credentials) error) BinderOption {
-	return funcCredentialFilter(f)
+	return func(b *binder) {
+		b.workloads.credentialFilter = f
+	}
 }

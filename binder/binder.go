@@ -65,7 +65,7 @@ func NewBinder(searchPath string, opts ...BinderOption) Binder {
 
 	// apply options
 	for _, opt := range opts {
-		opt.apply(b)
+		opt(b)
 	}
 
 	return b
