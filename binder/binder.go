@@ -55,12 +55,20 @@ type workload struct {
 	creds    Credentials
 }
 
-func NewBinder(searchPath string) Binder {
+func NewBinder(searchPath string, opts ...BinderOption) Binder {
 	ws := newWorkloadStore()
-	return &binder{
+	b := &binder{
 		searchPath: searchPath,
 		server:     grpc.NewServer(grpc.Creds(ws)),
-		workloads:  ws}
+		workloads:  ws,
+	}
+
+	// apply options
+	for _, opt := range opts {
+		opt(b)
+	}
+
+	return b
 }
 
 func (b *binder) Server() *grpc.Server {

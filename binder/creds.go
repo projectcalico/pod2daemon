@@ -16,6 +16,7 @@ package binder
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"sync"
 
@@ -26,6 +27,9 @@ import (
 type workloadStore struct {
 	mu    sync.RWMutex
 	creds map[string]workload
+
+	// credential filter option
+	credentialFilter funcCredentialFilter
 }
 
 func newWorkloadStore() *workloadStore {
@@ -43,8 +47,17 @@ func (s *workloadStore) ServerHandshake(conn net.Conn) (net.Conn, credentials.Au
 	// TODO: maybe index this for faster lookup?
 	addr := conn.LocalAddr()
 	for _, w := range s.creds {
-		if addrEqual(addr, w.listener.Addr()) {
+		if !addrEqual(addr, w.listener.Addr()) {
+			continue
+		}
+
+		if s.credentialFilter == nil {
 			return conn, w.creds, nil
+		}
+
+		if err := s.credentialFilter(w.creds); err != nil {
+			conn.Close()
+			return nil, nil, fmt.Errorf("credential denied: %w", err)
 		}
 	}
 
